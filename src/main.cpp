@@ -1,15 +1,26 @@
-#ifndef _WIN32
-#include "windows.h"
-#else
-#include "unistd.h"
-#endif
 #include <iostream>
+
+#include "external/lib/TimeoutManager.h"
+
+void viewTimeout(unsigned int duration)
+{
+    std::cout << (duration) << " milliseconds timeout!" << std::endl;
+};
 
 int main(int argc, char **argv)
 {
-    std::cout << "Hello" << std::endl;
-    std::cout.flush();
-    sleep(5);
-    std::cout << " World!" << std::endl;
+    TimeoutManager manager;
+
+    manager.addTimeout(4 * 1000, viewTimeout);
+    manager.addTimeout(5 * 1000, viewTimeout);
+    manager.addTimeout(6 * 1000, viewTimeout);
+    manager.addTimeout(2 * 1000, viewTimeout);
+    manager.addTimeout(10 * 1000, viewTimeout);
+    manager.addTimeout(8 * 1000, viewTimeout);
+    manager.addTimeout(2.5 * 1000, viewTimeout);
+    manager.addTimeout(3 * 1000, viewTimeout);
+
+    manager.launch();
+
     return 0;
 };
