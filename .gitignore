@@ -1,2 +1,8 @@
 # Ignore build folder.
 build/
+src/external/json/.clang-format
+src/external/json/.clang-tidy
+src/external/json/.drone.yml
+src/external/json/.github/
+src/external/json/.gitignore
+src/external/json/.travis.yml

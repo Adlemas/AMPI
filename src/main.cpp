@@ -1,26 +1,26 @@
 #include <iostream>
 
-#include "external/lib/TimeoutManager.h"
-
-void viewTimeout(unsigned int duration)
-{
-    std::cout << (duration) << " milliseconds timeout!" << std::endl;
-};
+#include "external/lib/FileManager.h"
+#include "external/lib/Additional.h"
 
 int main(int argc, char **argv)
 {
-    TimeoutManager manager;
+    if (argc < 2)
+    {
+        std::cout << "Please pass path to project directory." << std::endl;
+        return 0;
+    }
 
-    manager.addTimeout(4 * 1000, viewTimeout);
-    manager.addTimeout(5 * 1000, viewTimeout);
-    manager.addTimeout(6 * 1000, viewTimeout);
-    manager.addTimeout(2 * 1000, viewTimeout);
-    manager.addTimeout(10 * 1000, viewTimeout);
-    manager.addTimeout(8 * 1000, viewTimeout);
-    manager.addTimeout(2.5 * 1000, viewTimeout);
-    manager.addTimeout(3 * 1000, viewTimeout);
+    FileManager manager;
 
-    manager.launch();
+    std::string path(argv[1]);
+    replace(path, "ampi.exe", "");
+    manager.setPath(path);
+
+    if (manager.hasConfigFile())
+        manager.readConfigFile();
+    else
+        std::cout << "Config file doesn't exists." << std::endl;
 
     return 0;
 };
