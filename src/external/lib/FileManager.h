@@ -65,7 +65,7 @@ public:
 
     bool readConfigFile();
 
-    void initProject();
+    bool initProject();
 
     void initProjectPropertyes();
 };

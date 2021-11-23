@@ -9,6 +9,8 @@ add_executable(${PROJECT_NAME}
     src/external/lib/TimeoutManager/TimeoutManager.cpp
     src/external/lib/FileManager.h
     src/external/lib/FileManager/FileManager.cpp
+    src/external/lib/CommandManager.h
+    src/external/lib/CommandManager/CommandManager.cpp
     src/external/lib/Additional/Additional.cpp
     src/external/lib/Additional.h
     src/external/json/single_include/nlohmann/json.hpp

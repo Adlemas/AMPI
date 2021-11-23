@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "external/lib/FileManager.h"
 #include "external/lib/Additional.h"
+#include "external/lib/CommandManager.h"
 
 int main(int argc, char **argv)
 {
@@ -12,14 +12,12 @@ int main(int argc, char **argv)
     }
 
     FileManager manager;
+    CommandManager cmdManager;
 
     std::string argument(argv[1]);
-    if (argument == "init")
+    if (cmdManager.hasCommand(argc, argv) == true)
     {
-        char tmp[256];
-        getcwd(tmp, 256);
-        manager.setPath(tmp);
-        manager.initProject();
+        cmdManager.parseCommand(argc, argv);
         return 0;
     }
 
@@ -32,6 +30,7 @@ int main(int argc, char **argv)
         {
             return 0;
         }
+        // Run interpreter or compiler.
     }
     else
         std::cout << "Config file doesn't exists." << std::endl;

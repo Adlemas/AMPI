@@ -87,15 +87,19 @@ void FileManager::Config::setProperty(std::string name, std::string value)
     Settings[name] = value;
 }
 
-void FileManager::initProject()
+bool FileManager::initProject()
 {
-    std::cout << "Initing new project at \"" << this->path << "\"..." << std::endl;
-    std::cout << "Creating project configuration file at \"" << this->configPath << "\"..." << std::endl;
+    if (this->hasConfigFile())
+    {
+        std::cout << "Project in this directory is already inited." << std::endl;
+        return false;
+    }
+    std::cout << "  Initing new project at \"" << this->path << "\"..." << std::endl;
     this->writeFile(this->configPath, this->config.getSettings().dump(4));
-    std::cout << "Project configuration file was created successfully!" << std::endl;
-    std::cout << "Creating main ampi file at \"" << this->join(this->path, this->config.getSettings()["index"]) << "\"..." << std::endl;
     this->writeFile(this->join(this->path, this->config.getSettings()["index"]), "/**\n * AMPI: CrossPlatform Programming Language.\n */\nterminal.log(\"Hello world!\");");
     this->initProjectPropertyes();
+    std::cout << "  Project successfully inited." << std::endl;
+    return true;
 };
 
 void FileManager::initProjectPropertyes(){

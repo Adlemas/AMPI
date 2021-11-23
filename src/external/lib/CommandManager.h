@@ -2,15 +2,21 @@
 #include <string>
 
 #include "Additional.h"
+#include "FileManager.h"
 
-class Command
+class CommandManager
 {
 private:
+    FileManager __fileManager;
+
     std::string workingFolder;
 
     std::string command;
     std::string attribute;
-    std::string line;
+
+    std::vector<std::string> parameters;
+
+    int argc = 0;
 
     std::vector<std::string> cmds = {
         "init",
@@ -21,14 +27,19 @@ private:
         "-c",
         "-i"};
 
-    void setLine(std::string line);
     void setCommand(std::string command);
     void setAttribute(std::string attribute);
 
     bool isCommand(std::string argument);
 
+    bool init(std::string attribute, std::vector<std::string> parameters);
+
+    bool run(std::string attribute, std::vector<std::string> parameters);
+
 public:
+    void setFileManager(FileManager fileManager);
+
     bool hasCommand(int argc, char **argv);
 
-    bool parseCommand(std::vector<std::string> args);
+    bool parseCommand(int argc, char **argv);
 };
