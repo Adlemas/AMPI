@@ -4,6 +4,8 @@
 #include <string>
 #include <filesystem>
 #include <unistd.h>
+#include <typeinfo>
+
 #include "../json/single_include/nlohmann/json.hpp"
 
 using json = nlohmann::json;
@@ -52,13 +54,7 @@ private:
 
     json parseJson(std::string stringify);
 
-    void writeFile(std::string path, std::string content)
-    {
-        std::ofstream file;
-        file.open(path);
-        file << content;
-        file.close();
-    };
+    void writeFile(std::string path, std::string content);
 
 public:
     void setPath(std::string path);
@@ -67,7 +63,9 @@ public:
 
     bool hasConfigFile();
 
-    void readConfigFile();
+    bool readConfigFile();
 
     void initProject();
+
+    void initProjectPropertyes();
 };

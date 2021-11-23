@@ -30,31 +30,37 @@ bool FileManager::hasConfigFile()
     return (this->exists(this->join(this->path, "config.json")));
 };
 
-void FileManager::readConfigFile()
+bool FileManager::readConfigFile()
 {
     std::ifstream f;
     f.open(this->configPath.c_str(), std::ios::in | std::ios::binary);
     if (!f.is_open())
     {
         std::cerr << "Failed to open config file: " << this->configPath << std::endl;
-        return;
+        return false;
     }
 
     std::stringstream buffer;
     buffer << f.rdbuf();
     json CONFIG = this->parseJson(buffer.str());
 
-    // iterate the array
     for (const auto &property : CONFIG.items())
     {
         std::string key = property.key();
-        std::string value = CONFIG.value(key, "");
-        this->config.setProperty(key, value);
+        try
+        {
+            std::string value = CONFIG.value(key, "");
+            if (value.size() > 0)
+                this->config.setProperty(key, value);
+        }
+        catch (nlohmann::detail::type_error)
+        {
+            std::cout << "Config property error.\n  Property \"" << key << "\" must be a string." << std::endl;
+            return false;
+        }
     }
 
-    std::cout << "  Configuration file initialized!" << std::endl;
-
-    // std::cout << this->config.getSettings().dump(4) << std::endl;
+    return true;
 };
 
 json FileManager::Config::getSettings()
@@ -66,6 +72,14 @@ json FileManager::parseJson(std::string stringify)
 {
     json j_complete = json::parse(stringify);
     return j_complete;
+};
+
+void FileManager::writeFile(std::string path, std::string content)
+{
+    std::ofstream file;
+    file.open(path);
+    file << content;
+    file.close();
 };
 
 void FileManager::Config::setProperty(std::string name, std::string value)
@@ -81,4 +95,9 @@ void FileManager::initProject()
     std::cout << "Project configuration file was created successfully!" << std::endl;
     std::cout << "Creating main ampi file at \"" << this->join(this->path, this->config.getSettings()["index"]) << "\"..." << std::endl;
     this->writeFile(this->join(this->path, this->config.getSettings()["index"]), "/**\n * AMPI: CrossPlatform Programming Language.\n */\nterminal.log(\"Hello world!\");");
+    this->initProjectPropertyes();
+};
+
+void FileManager::initProjectPropertyes(){
+
 };

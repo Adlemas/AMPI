@@ -27,7 +27,12 @@ int main(int argc, char **argv)
     manager.setPath(argument);
 
     if (manager.hasConfigFile())
-        manager.readConfigFile();
+    {
+        if (!manager.readConfigFile())
+        {
+            return 0;
+        }
+    }
     else
         std::cout << "Config file doesn't exists." << std::endl;
 
