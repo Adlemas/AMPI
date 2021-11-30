@@ -3,6 +3,7 @@
 
 #include "Additional.h"
 #include "FileManager.h"
+#include "../AST/tokenizer.h"
 
 class CommandManager
 {
@@ -20,7 +21,7 @@ private:
 
     std::vector<std::string> cmds = {
         "init",
-        "build"};
+        "run"};
 
     std::vector<std::string> attributes = {
         "--help",

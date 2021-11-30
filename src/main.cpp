@@ -21,19 +21,5 @@ int main(int argc, char **argv)
         return 0;
     }
 
-    replace(argument, "ampi.exe", "");
-    manager.setPath(argument);
-
-    if (manager.hasConfigFile())
-    {
-        if (!manager.readConfigFile())
-        {
-            return 0;
-        }
-        // Run interpreter or compiler.
-    }
-    else
-        std::cout << "Config file doesn't exists." << std::endl;
-
     return 0;
 };

@@ -68,6 +68,11 @@ json FileManager::Config::getSettings()
     return this->Settings;
 }
 
+json FileManager::getSettings()
+{
+    return this->config.getSettings();
+}
+
 json FileManager::parseJson(std::string stringify)
 {
     json j_complete = json::parse(stringify);
@@ -97,11 +102,6 @@ bool FileManager::initProject()
     std::cout << "  Initing new project at \"" << this->path << "\"..." << std::endl;
     this->writeFile(this->configPath, this->config.getSettings().dump(4));
     this->writeFile(this->join(this->path, this->config.getSettings()["index"]), "/**\n * AMPI: CrossPlatform Programming Language.\n */\nterminal.log(\"Hello world!\");");
-    this->initProjectPropertyes();
     std::cout << "  Project successfully inited." << std::endl;
     return true;
-};
-
-void FileManager::initProjectPropertyes(){
-
 };

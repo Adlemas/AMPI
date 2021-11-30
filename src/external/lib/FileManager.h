@@ -48,8 +48,6 @@ private:
     std::string configPath;
     Config config;
 
-    std::string join(std::string normal, std::string additional);
-
     inline bool exists(std::string destination);
 
     json parseJson(std::string stringify);
@@ -59,6 +57,8 @@ private:
 public:
     void setPath(std::string path);
 
+    std::string join(std::string normal, std::string additional);
+
     std::string getPath();
 
     bool hasConfigFile();
@@ -67,5 +67,5 @@ public:
 
     bool initProject();
 
-    void initProjectPropertyes();
+    json getSettings();
 };

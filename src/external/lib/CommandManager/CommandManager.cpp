@@ -65,6 +65,10 @@ bool CommandManager::parseCommand(int argc, char **argv)
         }
     }
 
+    char tmp[256];
+    getcwd(tmp, 256);
+    __fileManager.setPath(tmp);
+
     if (command == "init")
     {
         return (this->init(this->attribute, this->parameters));
@@ -93,6 +97,45 @@ bool CommandManager::init(std::string attribute, std::vector<std::string> parame
         return false;
     }
 }
+
+bool CommandManager::run(std::string attribute, std::vector<std::string> parameters)
+{
+    std::string filename = this->__fileManager.getSettings().value("index", "");
+    std::string mainPath = this->__fileManager.join(this->__fileManager.getPath(), filename);
+    std::cout << "  Running ampi file \"" << filename << "\" at \"" << mainPath << "\"..." << std::endl;
+    std::ifstream f;
+    f.open(mainPath.c_str(), std::ios::in | std::ios::binary);
+    if (!f.is_open())
+    {
+        std::cerr << "Failed to open ampi file: " << mainPath << std::endl;
+        return false;
+    }
+
+    std::stringstream buffer;
+    buffer << f.rdbuf();
+
+    std::string source = buffer.str();
+
+    std::cout << source << std::endl;
+
+    TokenList list;
+    Tokenizer tokenizer;
+
+    tokenizer.tokenize(&list, source);
+
+    for (int i = 0; i < list.ptr; i++)
+    {
+        std::cout << "    TYPE: " << list.data[i]->type << std::endl;
+        std::cout << "    DATA: " << list.data[i]->data << std::endl
+                  << std::endl;
+    }
+
+    std::cout << "    Tokens: " << list.ptr << std::endl;
+
+    token_list_destroy(&list);
+
+    return true;
+};
 
 void CommandManager::setFileManager(FileManager fileManager)
 {

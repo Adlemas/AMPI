@@ -14,6 +14,12 @@ add_executable(${PROJECT_NAME}
     src/external/lib/Additional/Additional.cpp
     src/external/lib/Additional.h
     src/external/json/single_include/nlohmann/json.hpp
+    src/external/AST/ast.cpp
+    src/external/AST/ast.h
+    src/external/AST/token.cpp
+    src/external/AST/token.h
+    src/external/AST/tokenizer.cpp
+    src/external/AST/tokenizer.h
 )
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
