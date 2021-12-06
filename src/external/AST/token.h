@@ -6,7 +6,12 @@
 enum _TokenType
 {
     OPERATOR,
-    NUMBER
+    NUMBER,
+    ID,
+    VARIABLE_KEYWORD,
+    IF_KEYWORD,
+    ELSE_KEYWORD,
+    FUNCTION_KEYWORD
 };
 typedef enum _TokenType TokenType;
 

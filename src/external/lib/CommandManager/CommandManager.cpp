@@ -123,14 +123,65 @@ bool CommandManager::run(std::string attribute, std::vector<std::string> paramet
 
     tokenizer.tokenize(&list, source);
 
-    for (int i = 0; i < list.ptr; i++)
+    // for (int i = 0; i < list.ptr; i++)
+    // {
+    //     std::cout << "    TYPE: " << list.data[i]->type << std::endl;
+    //     std::cout << "    DATA: " << list.data[i]->data << std::endl
+    //               << std::endl
+    //               << std::endl;
+    // }
+
+    Binary binary;
+    binary.binary_create(&binary, 1);
+
+    ParserStatus pstat = binary.binary_start(&binary, &list);
+    if (pstat == PARSER_SUCCESS)
     {
-        std::cout << "    TYPE: " << list.data[i]->type << std::endl;
-        std::cout << "    DATA: " << list.data[i]->data << std::endl
-                  << std::endl;
+        int value = binary.data[0];
+        for (int i = 1; i < binary.ptr; i++)
+        {
+            std::cout << binary.types[i] << std::endl;
+            std::cout << binary.data[i] << std::endl;
+            if (binary.types[i] == OPERATOR)
+            {
+                if (binary.types[i + 1] == NUMBER)
+                {
+                    if (binary.data[i] == PLUS)
+                    {
+                        value += binary.data[i + 1];
+                    }
+                    else if (binary.data[i] == MINUS)
+                    {
+                        value -= binary.data[i + 1];
+                    }
+                    else
+                    {
+                        std::cout << "ParseError: unexpected token " << binary.data[i] << '!' << std::endl;
+                        return false;
+                    }
+                    i++;
+                }
+                else
+                {
+                    std::cout << "ParseError: unexpected token " << binary.data[i + 1] << '!' << std::endl;
+                    return false;
+                }
+            }
+            else
+            {
+                std::cout << "ParseError: unexpected token " << binary.data[i] << '!' << std::endl;
+                return false;
+            }
+        }
+        std::cout << "  Binary result: " << value << std::endl;
+        std::cout << std::endl;
+    }
+    else
+    {
+        return false;
     }
 
-    std::cout << "    Tokens: " << list.ptr << std::endl;
+    binary_destroy(&binary);
 
     token_list_destroy(&list);
 

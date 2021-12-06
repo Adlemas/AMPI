@@ -1,5 +1,10 @@
 #include "tokenizer.h"
 
+#define variable_keyword "v"
+#define function_keyword "f"
+#define if_keyword "if"
+#define else_keyword "else"
+
 Token *Tokenizer::token_create(int type, int data, int line, int symbol)
 {
     Token *tok = (Token *)std::malloc(sizeof(Token));
@@ -65,7 +70,6 @@ void Tokenizer::tokenize(TokenList *list, std::string source)
 
     for (int i = 0; i < source.length(); i++)
     {
-        std::cout << "  - " << i + 1 << ". \"" << source[i] << "\" - " << symbol << " symbol, " << line << " line." << std::endl;
         if (source[i] == '1' || source[i] == '2' || source[i] == '3' || source[i] == '4' || source[i] == '5' || source[i] == '6' || source[i] == '7' || source[i] == '8' || source[i] == '9' || source[i] == '0')
         {
             std::string number = tokenizer_get_number(&source, i);
@@ -74,7 +78,10 @@ void Tokenizer::tokenize(TokenList *list, std::string source)
         }
         else if (source[i] == '+' || source[i] == '-' || source[i] == '*' || source[i] == '/')
         {
-            token_list_add(list, token_create(OPERATOR, tokenizer_get_operator(source[i]), line, symbol));
+            int op = tokenizer_get_operator(source[i]);
+            std::cout << "adding operator: " << op << std::endl;
+            token_list_add(list, token_create(OPERATOR, op, line, symbol));
+            std::cout << "added operator!" << std::endl;
         }
         else if (source[i] == '\n')
         {

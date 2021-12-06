@@ -3,7 +3,7 @@
 
 #include "Additional.h"
 #include "FileManager.h"
-#include "../AST/tokenizer.h"
+#include "../AST/parser.h"
 
 class CommandManager
 {
