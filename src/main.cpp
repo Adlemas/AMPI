@@ -5,6 +5,11 @@
 
 int main(int argc, char **argv)
 {
+    if (setlocale(LC_ALL, "") == NULL)
+    {
+        std::cout << "Unable to set locale!" << std::endl;
+    }
+
     if (argc < 2)
     {
         std::cout << "Please pass path to project directory or special command (--help for more information)." << std::endl;

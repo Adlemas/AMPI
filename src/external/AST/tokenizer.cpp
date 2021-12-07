@@ -5,13 +5,14 @@
 #define if_keyword "if"
 #define else_keyword "else"
 
-Token *Tokenizer::token_create(int type, int data, int line, int symbol)
+Token *Tokenizer::token_create(int type, int data, int line, int symbol, char *value)
 {
     Token *tok = (Token *)std::malloc(sizeof(Token));
     tok->type = type;
     tok->data = data;
     tok->line = line;
     tok->symbol = symbol;
+    tok->value = value;
     return tok;
 };
 
@@ -38,7 +39,7 @@ Token *Tokenizer::token_list_get(TokenList *list, int index)
     return list->data[index];
 };
 
-std::string Tokenizer::tokenizer_get_number(std::string *source, int index)
+char *Tokenizer::tokenizer_get_number(std::string *source, int index)
 {
     std::string num_str = "";
     num_str += (*source)[index++];
@@ -46,7 +47,30 @@ std::string Tokenizer::tokenizer_get_number(std::string *source, int index)
     {
         num_str += (*source)[index++];
     }
-    return num_str;
+    return (char *)num_str.c_str();
+};
+
+char *Tokenizer::append(char *array, char a)
+{
+    size_t len = strlen(array);
+    char *ret = new char[len + 2];
+
+    strcpy(ret, array);
+    ret[len] = a;
+    ret[len + 1] = '\0';
+
+    return ret;
+}
+
+char *Tokenizer::tokenizer_get_id(std::string *source, int index)
+{
+    char *id = (char *)"";
+    id = append(id, (*source)[index++]);
+    while (std::isalpha((*source)[index]) || std::isdigit((*source)[index]))
+    {
+        id = append(id, (*source)[index++]);
+    }
+    return id;
 };
 
 int Tokenizer::tokenizer_get_operator(char symbol)
@@ -73,15 +97,42 @@ void Tokenizer::tokenize(TokenList *list, std::string source)
         if (source[i] == '1' || source[i] == '2' || source[i] == '3' || source[i] == '4' || source[i] == '5' || source[i] == '6' || source[i] == '7' || source[i] == '8' || source[i] == '9' || source[i] == '0')
         {
             std::string number = tokenizer_get_number(&source, i);
-            token_list_add(list, token_create(NUMBER, std::stoi(number), line, symbol));
+            token_list_add(list, token_create(NUMBER, std::stoi(number), line, symbol, (char *)""));
             i += number.length() - 1;
         }
         else if (source[i] == '+' || source[i] == '-' || source[i] == '*' || source[i] == '/')
         {
             int op = tokenizer_get_operator(source[i]);
-            std::cout << "adding operator: " << op << std::endl;
-            token_list_add(list, token_create(OPERATOR, op, line, symbol));
-            std::cout << "added operator!" << std::endl;
+            token_list_add(list, token_create(OPERATOR, op, line, symbol, (char *)""));
+        }
+        else if (std::isalpha(source[i]))
+        {
+            char *id = tokenizer_get_id(&source, i);
+
+            std::cout << std::endl;
+
+            if (strcmp(id, variable_keyword) == 0)
+            {
+                token_list_add(list, token_create(VARIABLE_KEYWORD, 0, line, symbol, (char *)""));
+            }
+            else if (strcmp(id, if_keyword) == 0)
+            {
+                token_list_add(list, token_create(IF_KEYWORD, 0, line, symbol, (char *)""));
+            }
+            else if (strcmp(id, else_keyword) == 0)
+            {
+                token_list_add(list, token_create(ELSE_KEYWORD, 0, line, symbol, (char *)""));
+            }
+            else if (strcmp(id, function_keyword) == 0)
+            {
+                token_list_add(list, token_create(FUNCTION_KEYWORD, 0, line, symbol, (char *)""));
+            }
+            else
+            {
+                token_list_add(list, token_create(ID, 0, line, symbol, id));
+            }
+
+            i += strlen(id) - 1;
         }
         else if (source[i] == '\n')
         {

@@ -102,7 +102,6 @@ bool CommandManager::run(std::string attribute, std::vector<std::string> paramet
 {
     std::string filename = this->__fileManager.getSettings().value("index", "");
     std::string mainPath = this->__fileManager.join(this->__fileManager.getPath(), filename);
-    std::cout << "  Running ampi file \"" << filename << "\" at \"" << mainPath << "\"..." << std::endl;
     std::ifstream f;
     f.open(mainPath.c_str(), std::ios::in | std::ios::binary);
     if (!f.is_open())
@@ -116,20 +115,10 @@ bool CommandManager::run(std::string attribute, std::vector<std::string> paramet
 
     std::string source = buffer.str();
 
-    std::cout << source << std::endl;
-
     TokenList list;
     Tokenizer tokenizer;
 
     tokenizer.tokenize(&list, source);
-
-    // for (int i = 0; i < list.ptr; i++)
-    // {
-    //     std::cout << "    TYPE: " << list.data[i]->type << std::endl;
-    //     std::cout << "    DATA: " << list.data[i]->data << std::endl
-    //               << std::endl
-    //               << std::endl;
-    // }
 
     Binary binary;
     binary.binary_create(&binary, 1);
@@ -140,8 +129,6 @@ bool CommandManager::run(std::string attribute, std::vector<std::string> paramet
         int value = binary.data[0];
         for (int i = 1; i < binary.ptr; i++)
         {
-            std::cout << binary.types[i] << std::endl;
-            std::cout << binary.data[i] << std::endl;
             if (binary.types[i] == OPERATOR)
             {
                 if (binary.types[i + 1] == NUMBER)

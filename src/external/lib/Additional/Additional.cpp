@@ -24,3 +24,15 @@ std::vector<std::string> split(std::string str, std::string delimiter)
 
     return tokens;
 };
+
+char *push(char *str, char a)
+{
+    size_t len = strlen(str);
+    char *ret = new char[len + 2];
+
+    strcpy(ret, str);
+    ret[len] = a;
+    ret[len + 1] = '\0';
+
+    return ret;
+}

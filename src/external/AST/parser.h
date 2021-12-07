@@ -10,6 +10,13 @@ enum _ParserStatus
 };
 typedef enum _ParserStatus ParserStatus;
 
+struct _Variable
+{
+    char *name = (char *)"";
+    int value = 0;
+};
+typedef struct _Variable Variable;
+
 struct _Binary
 {
     int *data;
@@ -20,10 +27,17 @@ struct _Binary
     int tsize = 0;
     int tptr = 0;
 
+    Variable **variables;
+    int vsize = 0;
+    int vptr = 0;
+
     int binary_view_mul_div(_Binary *binary, TokenList *list, int index);
     void binary_create(_Binary *binary, int size);
     void binary_list_add(_Binary *binary, int item);
     void binary_type_add(_Binary *binary, int item);
+    void binary_var_add(_Binary *binary, Variable *item);
+    int binary_var_exists(_Binary *binary, char *name);
+    int binary_get_var_value(_Binary *binary, int index);
     ParserStatus binary_start(_Binary *binary, TokenList *list);
 };
 typedef struct _Binary Binary;

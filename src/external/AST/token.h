@@ -30,6 +30,7 @@ struct _Token
     int data;
     int line;
     int symbol;
+    char *value;
 };
 
 typedef struct _Token Token;
