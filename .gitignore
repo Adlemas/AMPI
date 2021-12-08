@@ -7,3 +7,4 @@ src/external/json/.github/
 src/external/json/.gitignore
 src/external/json/.travis.yml
 src/external/SFML
+.env
