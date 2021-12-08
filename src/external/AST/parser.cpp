@@ -1,10 +1,166 @@
 #include "parser.h"
 
-Variable *variable_create(char *name, int value)
+void parsetree_destroy(ParseTree *parsetree)
+{
+    for (int i = 0; i < parsetree->vptr; i++)
+    {
+        std::free(parsetree->variables[i]);
+    }
+    for (int i = 0; i < parsetree->ptr; i++)
+    {
+        std::free(parsetree->statements[i]->var_declare);
+        std::free(parsetree->statements[i]);
+    }
+    std::free(parsetree->variables);
+    std::free(parsetree->statements);
+    std::free(parsetree);
+};
+
+VariableDeclaration *vardeclare_create(char *name, int type, int value)
+{
+    VariableDeclaration *vardeclare = (VariableDeclaration *)std::malloc(sizeof(VariableDeclaration));
+    vardeclare->name = name;
+    vardeclare->type = type;
+    vardeclare->value = value;
+    return vardeclare;
+};
+
+ParseStatement *statement_create(int type, VariableDeclaration *vardeclare)
+{
+    ParseStatement *statement = (ParseStatement *)std::malloc(sizeof(ParseStatement));
+    statement->type = type;
+    statement->var_declare = vardeclare;
+    return statement;
+};
+
+void ParseTree::tree_create(ParseTree *tree, int size)
+{
+    tree->variables = (Variable **)std::malloc(sizeof(Variable *) * size);
+    tree->vptr = 0;
+    tree->vsize = size;
+
+    tree->statements = (ParseStatement **)std::malloc(sizeof(ParseStatement *) * size);
+    tree->size = 0;
+    tree->ptr = 0;
+
+    tree->pos = 0;
+
+    tree->currentToken = (Token *)std::malloc(sizeof(Token *));
+};
+
+void ParseTree::tree_var_add(ParseTree *tree, Variable *item)
+{
+    if (tree->vptr >= tree->vsize)
+    {
+        tree->vsize = tree->vsize * 2 + 1;
+        tree->variables = (Variable **)std::realloc(tree->variables, sizeof(Variable *) * tree->vsize);
+    }
+
+    tree->variables[tree->vptr++] = item;
+};
+
+int ParseTree::tree_var_exists(_ParseTree *tree, char *name)
+{
+    for (int i = 0; i < tree->vptr; i++)
+    {
+        if (strcmp(tree->variables[i]->name, name) == 0)
+        {
+            return i;
+        }
+    }
+    return -1;
+};
+
+void ParseTree::tree_statement_add(ParseTree *tree, ParseStatement *item)
+{
+    if (tree->ptr >= tree->size)
+    {
+        tree->size = tree->size * 2 + 1;
+        tree->statements = (ParseStatement **)std::realloc(tree->statements, sizeof(ParseStatement *) * tree->size);
+    }
+
+    tree->statements[tree->ptr++] = item;
+}
+
+bool ParseTree::eat(TokenType type, TokenList *list)
+{
+    if (currentToken->type != type)
+    {
+        std::cout << "ParseError: unexpected token at " << currentToken->line << ':' << currentToken->symbol << '!' << std::endl;
+        return false;
+    }
+    else
+    {
+        pos++;
+        currentToken = list->getToken(list, pos);
+        return true;
+    }
+}
+
+bool ParseTree::variable_declaration(_ParseTree *tree, TokenList *list)
+{
+    if (!tree->eat(VARIABLE_KEYWORD, list))
+        return false;
+
+    int type = -1;
+
+    char *name = tree->currentToken->value;
+    if (!tree->eat(ID, list))
+        return false;
+
+    if (tree->currentToken->type == SEMICOLON)
+    {
+        tree->tree_statement_add(tree, statement_create(VARIABLE_DECLARATION, vardeclare_create(name, JUST_DECLARE, 0)));
+    }
+    else
+    {
+        if (!tree->eat(EQUAL, list))
+            return false;
+        int value = tree->currentToken->data;
+        if (!tree->eat(NUMBER, list))
+            return false;
+        if (!tree->eat(SEMICOLON, list))
+            return false;
+        tree->tree_statement_add(tree, statement_create(VARIABLE_DECLARATION, vardeclare_create(name, WITH_VALUE, value)));
+    }
+
+    return true;
+};
+
+ParserStatus ParseTree::tree_start(ParseTree *tree, TokenList *list)
+{
+    tree->currentToken = list->data[0];
+
+    while (tree->currentToken->type != UNDEFINED)
+    {
+        if (tree->currentToken->type == VARIABLE_KEYWORD)
+        {
+            if (!variable_declaration(tree, list))
+                return PARSER_ERROR;
+        }
+        else
+        {
+            std::cout << "ParseError: unexpected token at " << tree->currentToken->line << ':' << tree->currentToken->symbol << '.' << std::endl;
+            return PARSER_ERROR;
+        }
+    };
+
+    std::cout << "Statements: " << tree->ptr << std::endl;
+
+    return PARSER_SUCCESS;
+};
+
+int ParseTree::tree_get_var_value(_ParseTree *tree, int index)
+{
+    return tree->variables[index]->value;
+};
+
+Variable *variable_create(char *name, int value, int type)
 {
     Variable *var = (Variable *)std::malloc(sizeof(Variable));
     var->name = name;
     var->value = value;
+    var->type = type;
     return var;
 };
 

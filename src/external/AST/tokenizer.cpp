@@ -87,7 +87,7 @@ int Tokenizer::tokenizer_get_operator(char symbol)
         return -1;
 };
 
-void Tokenizer::tokenize(TokenList *list, std::string source)
+TokenizeStatus Tokenizer::tokenize(TokenList *list, std::string source)
 {
     int line = 1;
     int symbol = 1;
@@ -136,10 +136,24 @@ void Tokenizer::tokenize(TokenList *list, std::string source)
         }
         else if (source[i] == '\n')
         {
-            std::cout << "   It's new line." << std::endl;
             line++;
             symbol = 0;
         }
+        else if (source[i] == '=')
+        {
+            token_list_add(list, token_create(EQUAL, 0, line, symbol, (char *)""));
+        }
+        else if (source[i] == ';')
+        {
+            token_list_add(list, token_create(SEMICOLON, 0, line, symbol, (char *)""));
+        }
+        else if (source[i] != ' ' && source[i] != '\0' && source[i] != '\r')
+        {
+            std::cout << "FatalError: undefined token at " << line << ':' << symbol << '.' << std::endl;
+            return TOKENIZE_ERROR;
+        }
         symbol++;
     };
+
+    return TOKENIZE_SUCCESS;
 };

@@ -118,59 +118,32 @@ bool CommandManager::run(std::string attribute, std::vector<std::string> paramet
     TokenList list;
     Tokenizer tokenizer;
 
-    tokenizer.tokenize(&list, source);
-
-    Binary binary;
-    binary.binary_create(&binary, 1);
-
-    ParserStatus pstat = binary.binary_start(&binary, &list);
-    if (pstat == PARSER_SUCCESS)
+    TokenizeStatus tstat = tokenizer.tokenize(&list, source);
+    if (tstat == TOKENIZE_SUCCESS)
     {
-        int value = binary.data[0];
-        for (int i = 1; i < binary.ptr; i++)
+        ParseTree tree;
+        tree.tree_create(&tree, 5);
+
+        ParserStatus pstat = tree.tree_start(&tree, &list);
+        if (pstat == PARSER_SUCCESS)
         {
-            if (binary.types[i] == OPERATOR)
+            std::cout << "Success!" << std::endl;
+            for (int i = 0; i < tree.ptr; i++)
             {
-                if (binary.types[i + 1] == NUMBER)
-                {
-                    if (binary.data[i] == PLUS)
-                    {
-                        value += binary.data[i + 1];
-                    }
-                    else if (binary.data[i] == MINUS)
-                    {
-                        value -= binary.data[i + 1];
-                    }
-                    else
-                    {
-                        std::cout << "ParseError: unexpected token " << binary.data[i] << '!' << std::endl;
-                        return false;
-                    }
-                    i++;
-                }
-                else
-                {
-                    std::cout << "ParseError: unexpected token " << binary.data[i + 1] << '!' << std::endl;
-                    return false;
-                }
-            }
-            else
-            {
-                std::cout << "ParseError: unexpected token " << binary.data[i] << '!' << std::endl;
-                return false;
+                std::cout << tree.statements[i]->type << std::endl;
             }
         }
-        std::cout << "  Binary result: " << value << std::endl;
-        std::cout << std::endl;
+        else
+        {
+            return false;
+        }
+        token_list_destroy(&list);
     }
     else
     {
+        token_list_destroy(&list);
         return false;
     }
-
-    binary_destroy(&binary);
-
-    token_list_destroy(&list);
 
     return true;
 };

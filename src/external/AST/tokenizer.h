@@ -3,6 +3,13 @@
 #include <string>
 #include <bits/stdc++.h>
 
+enum _TokenizeStatus
+{
+    TOKENIZE_SUCCESS,
+    TOKENIZE_ERROR
+};
+typedef enum _TokenizeStatus TokenizeStatus;
+
 class Tokenizer
 {
     Token *token_create(int type, int data, int line, int symbol, char *value);
@@ -21,5 +28,5 @@ class Tokenizer
     int tokenizer_get_operator(char symbol);
 
 public:
-    void tokenize(TokenList *list, std::string source);
+    TokenizeStatus tokenize(TokenList *list, std::string source);
 };
